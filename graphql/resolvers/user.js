@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 
 const Post = require('../../models/post')
 const User = require('../../models/user')
+const { validateRegisterInput } = require('../../utils/validator')
 
 const userResolvers = {
     Query: {
@@ -16,15 +17,22 @@ const userResolvers = {
         register: async (parent, args, contex, info) => {
             const { username, email, password, confirmPassword } = args.input
 
+            // validate User
+            const { valid, errors } = validateRegisterInput(username, email, password, confirmPassword)
+
+            if (!valid) {
+                for (const key in errors) {
+                    if (Object.hasOwnProperty.call(errors, key)) {
+                        const element = errors[key];
+                        throw new Error(element)
+                    }
+                }
+            }
+
             // email exists
             const user = await User.findOne({ email })
             if (user) {
                 throw new Error('Email already exists')
-            }
-
-            // match password & confirmPassword
-            if (password != confirmPassword) {
-                throw new Error('Password does not match')
             }
 
             // hash password
