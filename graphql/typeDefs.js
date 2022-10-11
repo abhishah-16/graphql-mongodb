@@ -5,7 +5,8 @@ const typeDefs = gql`
         id: ID!
         username: String!
         email: String!
-        password: String!
+        token: String!
+        createdAt: String!
     }
     type Post{
         id: ID!
@@ -16,6 +17,15 @@ const typeDefs = gql`
     type Query{
         getPosts: [Post!]
         getUsers: [User!]
+    }
+    input RegisterInput{
+        username: String!
+        email: String!
+        password: String!
+        confirmPassword: String!
+    }
+    type Mutation{
+        register(input: RegisterInput!): User!
     }
 `
 module.exports = typeDefs
