@@ -16,6 +16,17 @@ const userResolvers = {
         register: async (parent, args, contex, info) => {
             const { username, email, password, confirmPassword } = args.input
 
+            // email exists
+            const user = await User.findOne({ email })
+            if (user) {
+                throw new Error('Email already exists')
+            }
+
+            // match password & confirmPassword
+            if (password != confirmPassword) {
+                throw new Error('Password does not match')
+            }
+
             // hash password
             const hashpassword = await bcrypt.hash(password, 12)
 
