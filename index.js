@@ -7,6 +7,12 @@ const Post = require('./models/post')
 const User = require('./models/user')
 
 const typeDefs = gql`
+    type User{
+        id:ID!
+        username: String!
+        email: String!
+        password: String!
+    }
     type Post{
         id:ID!
         body: String!
@@ -15,6 +21,7 @@ const typeDefs = gql`
     }
     type Query{
         getPosts: [Post!]
+        getUsers:[User!]
     }
 `
 const resolvers = {
@@ -22,6 +29,10 @@ const resolvers = {
         getPosts: async () => {
             const posts = await Post.find()
             return posts
+        },
+        getUsers: async () => {
+            const users = await User.find()
+            return users
         }
     }
 }
