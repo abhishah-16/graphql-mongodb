@@ -5,7 +5,7 @@ const checkAuth = require('../../utils/check.auth')
 const postresolvers = {
     Query: {
         getPosts: async () => {
-            const posts = await Post.find()
+            const posts = await Post.find().sort({ createdAt: -1 })
             return posts.map((post) => {
                 return {
                     ...post._doc,
@@ -36,6 +36,17 @@ const postresolvers = {
                 id: newPost._id,
                 createdAt: newPost.createdAt.toISOString(),
             }
+        },
+        deletePost: async (parent, args, contex) => {
+            const id = args.id
+            const user = checkAuth(contex)
+            const post = await Post.findById(id)
+            if (user.email === post.email) {
+                await post.remove()
+            } else {
+                throw new Error('Action not allowed')
+            }
+            return 'Post is deleted'
         }
     }
 }
