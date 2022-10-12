@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 
 const Post = require('../../models/post')
 const User = require('../../models/user')
-const { validateRegisterInput } = require('../../utils/validator')
+const { validateRegisterInput, validateLoginInput } = require('../../utils/validator')
 
 const userResolvers = {
     Query: {
@@ -48,12 +48,7 @@ const userResolvers = {
             await newUser.save()
 
             // generate token
-            const payload = {
-                id: newUser._id,
-                email: newUser.email,
-                username: newUser.username
-            }
-            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' })
+            const token = generateToken(newUser)
 
             return {
                 ...newUser._doc,
@@ -61,7 +56,44 @@ const userResolvers = {
                 createdAt: newUser.createdAt.toISOString(),
                 token
             }
+        },
+        login: async (parent, ags, contex, info) => {
+            const { email, password } = args
+            const { valid, errors } = validateLoginInput(email, password)
+
+            // find user
+            const user = await User.findOne({ email })
+            if (!user) {
+                errors.general = 'User not found'
+                throw new UserInputError('Invalid Credentials', { errors })
+            }
+
+            // match passwords
+            const match = await bcrypt.compare(password, user.password)
+            if (!match) {
+                errors.general = 'Invalid Credentials'
+                throw new UserInputError('Credentials', { errors })
+            }
+
+            // generate token
+            const token = generateToken(user)
+            return {
+                ...user._doc,
+                id: user._id,
+                createdAt: user.createdAt.toISOString(),
+                token
+            }
         }
     }
+}
+
+const generateToken = (user) => {
+    const payload = {
+        id: user._id,
+        email: user.email,
+        username: user.username
+    }
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' })
+    return token
 }
 module.exports = userResolvers
