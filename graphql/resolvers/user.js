@@ -1,4 +1,5 @@
 require('dotenv').config()
+const { UserInputError } = require('apollo-server')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
@@ -10,7 +11,13 @@ const userResolvers = {
     Query: {
         getUsers: async () => {
             const users = await User.find()
-            return users
+            return users.map((user) => {
+                return {
+                    ...user._doc,
+                    id: user._id,
+                    createdAt: user.createdAt.toISOString()
+                }
+            })
         }
     },
     Mutation: {
@@ -19,14 +26,8 @@ const userResolvers = {
 
             // validate User
             const { valid, errors } = validateRegisterInput(username, email, password, confirmPassword)
-
             if (!valid) {
-                for (const key in errors) {
-                    if (Object.hasOwnProperty.call(errors, key)) {
-                        const element = errors[key];
-                        throw new Error(element)
-                    }
-                }
+                throw new UserInputError('Error', { errors })
             }
 
             // email exists
