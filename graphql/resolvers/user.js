@@ -57,7 +57,7 @@ const userResolvers = {
                 token
             }
         },
-        login: async (parent, ags, contex, info) => {
+        login: async (parent, args, contex, info) => {
             const { email, password } = args
             const { valid, errors } = validateLoginInput(email, password)
 

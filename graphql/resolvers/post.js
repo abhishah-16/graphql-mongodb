@@ -6,6 +6,13 @@ const postresolvers = {
         getPosts: async () => {
             const posts = await Post.find()
             return posts
+        },
+        getPost: async (parent, args) => {
+            const post = await Post.findById(args.id)
+            if (!post) {
+                throw new Error('Post not found')
+            }
+            return post
         }
     }
 }
