@@ -25,7 +25,17 @@ const postresolvers = {
     Mutation: {
         createPost: async (parent, args, contex, info) => {
             const user = await checkAuth(contex)
-            console.log(user);
+            const newPost = new Post({
+                body: args.body,
+                email: user.email,
+                user: user.id,
+            })
+            await newPost.save()
+            return {
+                ...newPost._doc,
+                id: newPost._id,
+                createdAt: newPost.createdAt.toISOString(),
+            }
         }
     }
 }
