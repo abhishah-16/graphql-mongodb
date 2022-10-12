@@ -31,9 +31,10 @@ const userResolvers = {
             }
 
             // email exists
-            const user = await User.findOne({ email })
+            const user = await User.find({ $or: [{ email }, { username }] })
+            console.log(user);
             if (user) {
-                throw new Error('Email already exists')
+                throw new Error('User already exists')
             }
 
             // hash password

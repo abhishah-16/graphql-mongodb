@@ -5,7 +5,7 @@ const postSchema = new Schema({
     body: {
         type: String
     },
-    email: {
+    username: {
         type: String
     },
     comments: [
@@ -13,7 +13,7 @@ const postSchema = new Schema({
             body: {
                 type: String
             },
-            email: {
+            username: {
                 type: String
             },
             createdAt: {
@@ -23,7 +23,7 @@ const postSchema = new Schema({
     ],
     likes: [
         {
-            email: {
+            username: {
                 type: String
             },
             createdAt: {

@@ -1,26 +1,42 @@
 const { UserInputError } = require('apollo-server')
 const Post = require('../../models/post')
-const User = require('../../models/user')
 const checkAuth = require('../../utils/check.auth')
 
 const commentResolver = {
     Mutation: {
         createComment: async (parent, args, contex) => {
             const { postid, body } = args
-            const { email } = checkAuth(contex)
-            if (body.trim()) {
+            const { username } = checkAuth(contex)
+            if (body.trim() === '') {
                 throw new UserInputError('Body must not be empty')
             }
             const post = await Post.findById(postid)
             if (post) {
                 post.comments.unshift({
                     body,
-                    email,
-                    createdAt: new Date().toISOString
+                    username,
+                    createdAt: new Date().toISOString()
                 })
                 await post.save()
                 return post
-            }else {
+            } else {
+                throw new Error('Post not found')
+            }
+        },
+        deleteComment: async (parent, args, contex) => {
+            const { postid, commentid } = args
+            const { username } = checkAuth(contex)
+            const post = await Post.findById(postid)
+            if (post) {
+                const commentIndex = post.comments.findIndex(c => c.id === commentid)
+                if (post.comments[commentIndex].username === username) {
+                    post.comments.splice(commentIndex, 1)
+                    await post.save()
+                    return post
+                } else {
+                    throw new Error('Action not allowed')
+                }
+            } else {
                 throw new Error('Post not found')
             }
         }

@@ -1,5 +1,4 @@
 const Post = require('../../models/post')
-const User = require('../../models/user')
 const checkAuth = require('../../utils/check.auth')
 
 const postresolvers = {
@@ -27,7 +26,7 @@ const postresolvers = {
             const user = await checkAuth(contex)
             const newPost = new Post({
                 body: args.body,
-                email: user.email,
+                username: user.username,
                 user: user.id,
             })
             await newPost.save()
@@ -41,7 +40,7 @@ const postresolvers = {
             const id = args.id
             const user = checkAuth(contex)
             const post = await Post.findById(id)
-            if (user.email === post.email) {
+            if (user.username === post.username) {
                 await post.remove()
             } else {
                 throw new Error('Action not allowed')
