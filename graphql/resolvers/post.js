@@ -5,7 +5,13 @@ const postresolvers = {
     Query: {
         getPosts: async () => {
             const posts = await Post.find()
-            return posts
+            return posts.map((post) => {
+                return {
+                    ...post._doc,
+                    id: post._id,
+                    createdAt: post.createdAt.toISOString()
+                }
+            })
         },
         getPost: async (parent, args) => {
             const post = await Post.findById(args.id)
