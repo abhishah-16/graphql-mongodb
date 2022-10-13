@@ -6,10 +6,14 @@ const commentResolver = {
     Mutation: {
         createComment: async (parent, args, contex) => {
             const { postid, body } = args
+
+            // get User from contex req
             const { username } = checkAuth(contex)
             if (body.trim() === '') {
                 throw new UserInputError('Body must not be empty')
             }
+
+            // getpost & add comment in post
             const post = await Post.findById(postid)
             if (post) {
                 post.comments.unshift({
@@ -25,7 +29,11 @@ const commentResolver = {
         },
         deleteComment: async (parent, args, contex) => {
             const { postid, commentid } = args
+
+             // get User from contex req
             const { username } = checkAuth(contex)
+
+            // getpost & add comment in post
             const post = await Post.findById(postid)
             if (post) {
                 const commentIndex = post.comments.findIndex(c => c.id === commentid)

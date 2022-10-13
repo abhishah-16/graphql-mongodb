@@ -3,7 +3,6 @@ const { UserInputError } = require('apollo-server')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const Post = require('../../models/post')
 const User = require('../../models/user')
 const { validateRegisterInput, validateLoginInput } = require('../../utils/validator')
 
@@ -31,8 +30,7 @@ const userResolvers = {
             }
 
             // email exists
-            const user = await User.find({ $or: [{ email }, { username }] })
-            console.log(user);
+            const user = await User.findOne({ $or: [{ email }, { username }] })
             if (user) {
                 throw new Error('User already exists')
             }
