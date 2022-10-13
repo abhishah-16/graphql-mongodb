@@ -46,6 +46,27 @@ const postresolvers = {
                 throw new Error('Action not allowed')
             }
             return 'Post is deleted'
+        },
+        likePost: async (parent, args, context) => {
+            const { postid } = args
+            const { username } = checkAuth(context)
+            const post = await Post.findById(postid)
+            if (post) {
+                if (post.likes.find(like => like.username === username)) {
+                    // post already liked
+                    post.likes = post.likes.filter(like => like.username !== username)
+                } else {
+                    // post is not liked
+                    post.likes.unshift({
+                        username,
+                        createdAt: new Date().toISOString()
+                    })
+                }
+                await post.save()
+                return post
+            } else {
+                throw new Error('Post not found')
+            }
         }
     }
 }
