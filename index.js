@@ -1,4 +1,5 @@
 require('dotenv').config()
+require('colors')
 const { ApolloServer } = require('apollo-server')
 const mongoose = require('mongoose')
 
@@ -16,12 +17,12 @@ const myPlugin = {
                             const end = process.hrtime.bigint();
                             console.log(
                                 `Field ${info.parentType.name}.${info.fieldName
-                                } took ${end - start}ns`,
+                                    }`.yellow,
                             );
                             if (error) {
-                                console.log(`It failed with ${error}`);
+                                console.log(`It failed with ${error}`.magenta);
                             } else {
-                                console.log(`It returned ${result}`);
+                                console.log(`It returned ${result}`.green);
                             }
                         };
                     },
