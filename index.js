@@ -1,10 +1,12 @@
 require('dotenv').config()
 require('colors')
 const { ApolloServer } = require('apollo-server')
+const { PubSub } = require('graphql-subscriptions');
 const mongoose = require('mongoose')
 
 const typeDefs = require('./graphql/typeDefs')
 const resolvers = require('./graphql/resolvers/index')
+const pubsub = new PubSub()
 
 const myPlugin = {
     async requestDidStart(initialRequestContext) {
@@ -14,6 +16,7 @@ const myPlugin = {
                     willResolveField({ source, args, contextValue, info }) {
                         const start = process.hrtime.bigint();
                         return (error, result) => {
+                            console.log(result);
                             const end = process.hrtime.bigint();
                             if (info.parentType.name == 'Mutation') {
                                 console.log(
@@ -37,8 +40,11 @@ const myPlugin = {
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req }) => ({ req }),
-    plugins: [myPlugin]
+    context: ({ req }) => ({ req, pubsub }),
+    plugins: [myPlugin],
+    subscription: {
+        'graphql-ws': true
+    }
 })
 
 mongoose.connect(process.env.DATABASE_URL, () => {

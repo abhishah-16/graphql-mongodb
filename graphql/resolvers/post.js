@@ -30,6 +30,9 @@ const postresolvers = {
                 user: user.id,
             })
             await newPost.save()
+            contex.pubsub.publish('NEW_POST', {
+                newPost: newPost
+            })
             return {
                 ...newPost._doc,
                 id: newPost._id,
@@ -66,6 +69,13 @@ const postresolvers = {
                 return post
             } else {
                 throw new Error('Post not found')
+            }
+        }
+    },
+    Subscription: {
+        newPost: {
+            subscribe: (parent, args, { pubsub }) => {
+                pubsub.asyncIterator('NEW_POST')
             }
         }
     }
