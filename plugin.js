@@ -6,7 +6,6 @@ const myPlugin = {
                     willResolveField({ source, args, contextValue, info }) {
                         const start = process.hrtime.bigint();
                         return (error, result) => {
-                            console.log(result);
                             const end = process.hrtime.bigint();
                             if (info.parentType.name == 'Mutation') {
                                 console.log(
