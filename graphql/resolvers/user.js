@@ -4,13 +4,16 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const User = require('../../models/user')
+const checkAuth = require('../../utils/check.auth')
 const { validateRegisterInput, validateLoginInput } = require('../../utils/validator')
 
 const userResolvers = {
     Query: {
-        getUsers: async () => {
+        getUsers: async (parent, args, contex) => {
+            const { username } = checkAuth(contex)
             const users = await User.find()
-            return users.map((user) => {
+            const filterUser = users.filter(user => user.username == username)
+            return filterUser.map((user) => {
                 return {
                     ...user._doc,
                     id: user._id,
