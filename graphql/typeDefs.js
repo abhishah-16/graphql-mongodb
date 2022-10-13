@@ -26,6 +26,8 @@ const typeDefs = gql`
         createdAt: String!
         comments: [Comment]!
         likes: [Like]!
+        likeCount: Int!
+        commentCount: Int!
     }
     type Query{
         getPosts: [Post!]
@@ -46,6 +48,9 @@ const typeDefs = gql`
         createComment(postid: ID!,body: String!): Post!
         deleteComment(postid: ID!,commentid: ID!): Post!
         likePost(postid: ID!): Post!
+    }
+    type Subscription{
+        newPost: Post!
     }
 `
 module.exports = typeDefs

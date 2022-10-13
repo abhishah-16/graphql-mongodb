@@ -1,42 +1,19 @@
 require('dotenv').config()
 require('colors')
 const { ApolloServer } = require('apollo-server')
+const { PubSub } = require('graphql-subscriptions');
 const mongoose = require('mongoose')
 
 const typeDefs = require('./graphql/typeDefs')
 const resolvers = require('./graphql/resolvers/index')
-
-const myPlugin = {
-    async requestDidStart(initialRequestContext) {
-        return {
-            async executionDidStart(executionRequestContext) {
-                return {
-                    willResolveField({ source, args, contextValue, info }) {
-                        const start = process.hrtime.bigint();
-                        return (error, result) => {
-                            const end = process.hrtime.bigint();
-                            console.log(
-                                `Field ${info.parentType.name}.${info.fieldName
-                                    }`.yellow,
-                            );
-                            if (error) {
-                                console.log(`It failed with ${error}`.magenta);
-                            } else {
-                                console.log(`It returned ${result}`.green);
-                            }
-                        };
-                    },
-                };
-            },
-        };
-    },
-}
+const myPlugin = require('./plugin')
+const pubsub = new PubSub()
 
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req }) => ({ req }),
-    plugins: [myPlugin]
+    context: ({ req }) => ({ req, pubsub }),
+    plugins: [myPlugin],
 })
 
 mongoose.connect(process.env.DATABASE_URL, () => {
