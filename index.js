@@ -1,25 +1,31 @@
+const { ApolloServer } = require('apollo-server');
+const mongoose = require('mongoose');
 require('dotenv').config()
-require('colors')
-const { ApolloServer } = require('apollo-server')
-const { PubSub } = require('graphql-subscriptions');
-const mongoose = require('mongoose')
+const { PubSub } = require('graphql-subscriptions')
 
-const typeDefs = require('./graphql/typeDefs')
-const resolvers = require('./graphql/resolvers/index')
-const myPlugin = require('./plugin')
-const pubsub = new PubSub()
+const typeDefs = require('./graphql/typeDefs');
+const resolvers = require('./graphql/resolvers/index');
+
+const pubsub = new PubSub();
+
+const PORT = process.env.port || 5454;
 
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    tracing: true,
     context: ({ req }) => ({ req, pubsub }),
-    plugins: [myPlugin],
-})
+});
 
-mongoose.connect(process.env.DATABASE_URL, () => {
-    console.log(`CONNECTED TO MONGODB ATLAS : )`);
-})
-
-server.listen(5454).then((res) => {
-    console.log(`SERVER IS RUNNING AT ${res.url} :)`)
-})
+mongoose
+    .connect(process.env.DATABASE_URL, { useNewUrlParser: true })
+    .then(() => {
+        console.log('MongoDB Connected');
+        return server.listen({ port: PORT });
+    })
+    .then((res) => {
+        console.log(`Server running at ${res.url}`);
+    })
+    .catch(err => {
+        console.error(err)
+    })
