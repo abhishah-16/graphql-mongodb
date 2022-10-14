@@ -6,7 +6,6 @@ const { PubSub } = require('graphql-subscriptions')
 const typeDefs = require('./graphql/typeDefs');
 const resolvers = require('./graphql/resolvers/index');
 
-
 const pubsub = new PubSub();
 
 const PORT = process.env.port || 5454;
@@ -14,7 +13,8 @@ const PORT = process.env.port || 5454;
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req }) => ({ req, pubsub })
+    tracing: true,
+    context: ({ req }) => ({ req, pubsub }),
 });
 
 mongoose
