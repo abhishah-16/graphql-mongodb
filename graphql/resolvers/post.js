@@ -94,7 +94,9 @@ const postresolvers = {
     },
     Subscription: {
         newPost: {
-            subscribe: (parent, args, { pubsub }) => {
+            subscribe: (parent, args, contex) => {
+                
+               
                 pubsub.asyncIterator('NEW_POST')
             }
         }
