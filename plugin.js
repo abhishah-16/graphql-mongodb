@@ -7,7 +7,7 @@ const myPlugin = {
                         const start = process.hrtime.bigint();
                         return (error, result) => {
                             const end = process.hrtime.bigint();
-                            if (info.parentType.name == 'Mutation') {
+                            if (info.parentType.name == 'Mutation' || info.parentType.name == 'Query') {
                                 console.log(
                                     `Field ${info.parentType.name}.${info.fieldName
                                         }`.yellow,
@@ -15,7 +15,7 @@ const myPlugin = {
                                 if (error) {
                                     console.log(`It failed with ${error}`.magenta);
                                 } else {
-                                    console.log(`It returned ${result}`.green);
+                                    console.log({...result});
                                 }
                             }
                         };
