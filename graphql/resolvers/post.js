@@ -32,7 +32,7 @@ const postresolvers = {
     Mutation: {
         createPost: async (parent, args, contex, info) => {
             try {
-                const user = await checkAuth(contex)
+                const user = checkAuth(contex)
                 const newPost = new Post({
                     body: args.body,
                     username: user.username,

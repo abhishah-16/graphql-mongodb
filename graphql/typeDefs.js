@@ -7,6 +7,12 @@ const typeDefs = gql`
         email: String!
         token: String!
         createdAt: String!
+        posts: [Post]
+    }
+    type Story{
+        id: ID!
+        body: String!
+        username: String!
     }
     type Comment{
         id:ID!
@@ -33,6 +39,7 @@ const typeDefs = gql`
         getPosts: [Post!]
         getUsers: [User!]
         getPost(id:ID!): Post!
+        getStories: [Story!]
     }
     input RegisterInput{
         username: String!
@@ -48,6 +55,7 @@ const typeDefs = gql`
         createComment(postid: ID!,body: String!): Post!
         deleteComment(postid: ID!,commentid: ID!): Post!
         likePost(postid: ID!): Post!
+        createStory(body: String): Story!
     }
     type Subscription{
         newPost: Post!
