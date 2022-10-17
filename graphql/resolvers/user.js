@@ -4,8 +4,20 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const User = require('../../models/user')
+const Post = require('../../models/post')
 const checkAuth = require('../../utils/check.auth')
 const { validateRegisterInput, validateLoginInput } = require('../../utils/validator')
+
+const getAllPostByUser = async (userid) => {
+    const posts = await Post.find({ user: userid })
+    return posts.map((post) => {
+        return {
+            ...post._doc,
+            id: post._id,
+            createdAt: post.createdAt.toISOString()
+        }
+    })
+}
 
 const userResolvers = {
     Query: {
@@ -18,7 +30,8 @@ const userResolvers = {
                     return {
                         ...user._doc,
                         id: user._id,
-                        createdAt: user.createdAt.toISOString()
+                        createdAt: user.createdAt.toISOString(),
+                        posts: getAllPostByUser(user._id)
                     }
                 })
             } catch (error) {

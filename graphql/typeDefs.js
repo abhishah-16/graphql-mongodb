@@ -7,6 +7,7 @@ const typeDefs = gql`
         email: String!
         token: String!
         createdAt: String!
+        posts: [Post]
     }
     type Comment{
         id:ID!
