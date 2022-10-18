@@ -1,11 +1,10 @@
-const story = require('../../models/story')
 const Story = require('../../models/story')
 const checkAuth = require('../../utils/check.auth')
 
 const storyResolver = {
     Query: {
         getStories: async () => {
-            const stories = await Story.find()
+            const stories = await deleteStoriesAfterDay()
             return stories
         }
     },
@@ -40,8 +39,21 @@ const storyResolver = {
 const deleteStoriesAfterDay = async () => {
     const stories = await Story.find()
     const date = (new Date().getDate())
-    console.log(date);
+    const hours = (new Date().getHours())
+    const filterstories = stories.filter(s => {
+        if (s.createdAt.getDate() == date - 1 || s.createdAt.getDate() >= date) {
+            return s
+        } else {
+            return null
+        }
+    })
+    return filterstories.map(f => {
+        return {
+            ...f._doc,
+            id: f._id,
+            createdAt: f.createdAt.toISOString()
+        }
+    })
 }
-// new Date(new Date(myStringDate).getTime() + 60 * 60 * 24 * 1000);
 
 module.exports = storyResolver
