@@ -42,7 +42,15 @@ const deleteStoriesAfterDay = async () => {
     const hours = (new Date().getHours())
     const filterstories = stories.filter(s => {
         if (s.createdAt.getDate() == date - 1 || s.createdAt.getDate() >= date) {
-            return s
+            if (s.createdAt.getDate() == date - 1) {
+                if (s.createdAt.getHours() >= hours) {
+                    return s
+                } else {
+                    return null
+                }
+            } else {
+                return s
+            }
         } else {
             return null
         }
