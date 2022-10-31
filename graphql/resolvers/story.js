@@ -17,7 +17,11 @@ const storyResolver = {
                 user: user.id
             })
             await newStory.save()
-            return newStory
+            return {
+                ...newStory._doc,
+                id: newStory._id,
+                createdAt: newStory.createdAt.toISOString(),
+            }
         },
         deleteStory: async (parent, args, contex) => {
             const { username } = checkAuth(contex)
