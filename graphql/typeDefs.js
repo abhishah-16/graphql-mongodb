@@ -58,6 +58,7 @@ const typeDefs = gql`
         deleteComment(postid: ID!,commentid: ID!): Post!
         likePost(postid: ID!): Post!
         createStory(body: String): Story!
+        updateStory(id:ID!,body: String!): String!
         deleteStory(storyid: ID!): String!
     }
     type Subscription{
