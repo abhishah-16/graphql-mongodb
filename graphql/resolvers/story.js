@@ -23,6 +23,22 @@ const storyResolver = {
                 createdAt: newStory.createdAt.toISOString(),
             }
         },
+        updateStory: async (parent, args, context) => {
+            const { username } = checkAuth(context)
+            const { id, body } = args
+            const story = await Story.findById(id)
+            if (!story) {
+                throw new Error('Story not found')
+            }
+            if (story.username == username) {
+                const result = await story.updateOne({ body })
+                if (result.modifiedCount === 1) {
+                    return ('story updated Succesfully')
+                }
+            } else {
+                throw new Error('Action not allowed')
+            }
+        },
         deleteStory: async (parent, args, contex) => {
             const { username } = checkAuth(contex)
             const { storyid } = args
