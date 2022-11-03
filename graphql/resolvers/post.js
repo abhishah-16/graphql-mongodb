@@ -66,6 +66,23 @@ const postresolvers = {
                 throw new Error(error)
             }
         },
+        updatePost: async (parent, args, context) => {
+            try {
+                const { id, body } = args
+                const { username } = checkAuth(context)
+                const post = await Post.findById(id)
+                if (post.username == username) {
+                    const result = await post.updateOne({ body })
+                    if (result.modifiedCount === 1) {
+                        return ('Post updated Succesfully')
+                    }
+                } else {
+                    throw new Error('Action not allowed')
+                }
+            } catch (error) {
+                throw new Error(error)
+            }
+        },
         likePost: async (parent, args, context) => {
             try {
                 const { postid } = args

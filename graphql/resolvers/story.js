@@ -44,19 +44,23 @@ const deleteStoriesAfterDay = async () => {
     const stories = await Story.find()
     const date = (new Date().getDate())
     const hours = (new Date().getHours())
+    const month = (new Date().getMonth())
+    const year = (new Date().getFullYear())
     const filterstories = stories.filter(s => {
-        if (s.createdAt.getDate() == date - 1 || s.createdAt.getDate() >= date) {
-            if (s.createdAt.getDate() == date - 1) {
-                if (s.createdAt.getHours() >= hours) {
-                    return s
+        if (s.createdAt.getMonth() == month) {
+            if (s.createdAt.getDate() == date - 1 || s.createdAt.getDate() >= date) {
+                if (s.createdAt.getDate() == date - 1) {
+                    if (s.createdAt.getHours() >= hours) {
+                        return s
+                    } else {
+                        return null
+                    }
                 } else {
-                    return null
+                    return s
                 }
             } else {
-                return s
+                return null
             }
-        } else {
-            return null
         }
     })
     return filterstories.map(f => {
