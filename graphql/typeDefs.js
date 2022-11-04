@@ -13,6 +13,7 @@ const typeDefs = gql`
         id: ID!
         body: String!
         username: String!
+        likes:[Like!]!
         createdAt: String!
     }
     type Comment{
@@ -60,6 +61,7 @@ const typeDefs = gql`
         createStory(body: String): Story!
         updateStory(id:ID!,body: String!): String!
         deleteStory(storyid: ID!): String!
+        likeStory(storyid:ID!): Story!
     }
     type Subscription{
         newPost: Post!
