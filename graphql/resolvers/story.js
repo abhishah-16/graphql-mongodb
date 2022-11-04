@@ -75,8 +75,17 @@ const storyResolver = {
                 const { storyid } = args
                 const story = await Story.findById(storyid)
                 if (story) {
-                   
+                    if (story.likes.find(like => like.username === username)) {
+                        story.likes = story.likes.filter(like => like.username != username)
+                    } else {
+                        story.likes.unshift({
+                            username,
+                            createdAt: new Date().toISOString()
+                        })
+                    }
                 }
+                await story.save()
+                return story
             } catch (error) {
                 throw new Error(error)
             }
