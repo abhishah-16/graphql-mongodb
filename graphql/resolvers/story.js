@@ -68,6 +68,18 @@ const storyResolver = {
             } catch (error) {
                 throw new Error(error)
             }
+        },
+        likeStory: async (parent, args, context) => {
+            try {
+                const { username } = checkAuth(context)
+                const { storyid } = args
+                const story = await Story.findById(storyid)
+                if (story) {
+                   
+                }
+            } catch (error) {
+                throw new Error(error)
+            }
         }
     }
 }

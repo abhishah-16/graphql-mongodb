@@ -7,6 +7,16 @@ const storySchema = new Schema({
     username: {
         type: String
     },
+    likes: [
+        {
+            username: {
+                type: String
+            },
+            createdAt: {
+                type: String
+            }
+        }
+    ],
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User'
